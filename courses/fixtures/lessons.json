@@ -1,0 +1,26 @@
+[
+  {
+    "model": "courses.lesson",
+    "pk": 1,
+    "fields": {
+      "title": "Введение в Python",
+      "course": 1,
+      "description": "Основы синтаксиса",
+      "preview": "",
+      "video_url": "https://sky.pro/video/python-intro",
+      "created_at": "2026-01-21T10:00:00Z"
+    }
+  },
+  {
+    "model": "courses.lesson",
+    "pk": 2,
+    "fields": {
+      "title": "Модели и сериализаторы",
+      "course": 2,
+      "description": "Модели, сериализаторы, ViewSet",
+      "preview": "",
+      "video_url": "https://sky.pro/video/drf-models",
+      "created_at": "2026-01-21T10:00:00Z"
+    }
+  }
+]
