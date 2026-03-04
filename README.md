@@ -359,7 +359,6 @@ docker compose up --build
 ```
 Проверьте в соседнем терминале:
 Проверяем Time Zone:
-
 ```
 docker compose exec web env | grep TIME_ZONE
 ```
