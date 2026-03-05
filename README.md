@@ -359,7 +359,6 @@ docker compose up --build
 ```
 Проверьте в соседнем терминале:
 Проверяем Time Zone:
-
 ```
 docker compose exec web env | grep TIME_ZONE
 ```
@@ -386,11 +385,26 @@ docker compose up --build
 
 ### Проверка работоспособности
 
-- Django API: открыть `http://localhost:8000/swagger/`.
-- PostgreSQL: `docker compose exec db pg_isready -U <USER> -d <NAME>`.
-- Redis: `docker compose exec redis redis-cli ping`.
-- Celery worker: `docker compose logs -f celery`.
-- Celery beat: `docker compose logs -f celery-beat`.
+- Django API: открыть 
+```
+http://localhost:8000/swagger/
+ ```
+- PostgreSQL: 
+```
+docker compose exec db pg_isready -U <USER> -d <NAME>
+```
+- Redis: 
+```
+docker compose exec redis redis-cli ping
+```
+- Celery worker:
+```
+docker compose logs -f celery
+```
+- Celery beat:
+```
+docker compose logs -f celery-beat
+```
 
 Автор: Казанцев Андрей
 
