@@ -495,6 +495,7 @@ sudo mkdir /var/www/yandex
 ```angular2html
 sudo nano /var/www/yandex/.env
 ```
+Сохраните файл `` Ctrl+O`` `` Enter ``и выйдите ``Ctrl+X``
 Посмотрите файл .env, что бы убедиться что он создан
 ```angular2html
 cat /var/www/yandex/.env
