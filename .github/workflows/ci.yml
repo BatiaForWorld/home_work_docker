@@ -108,7 +108,7 @@ jobs:
 
   deploy:
     needs: build
-    if: github.ref == 'refs/heads/CI/ci_cd_github_actions'
+    if: github.ref == 'refs/heads/CI/CD_github_actions'
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
