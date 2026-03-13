@@ -7,7 +7,7 @@ from drf_yasg import openapi
 schema_view = get_schema_view(
     openapi.Info(
         title="Courses API",
-        default_version='v1',
+        default_version="v1",
         description="API для управления пользователями, курсами, уроками, подписками и платежами Stripe.",
         contact=openapi.Contact(email="support@example.local"),
     ),
@@ -19,7 +19,13 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("courses/", include("courses.urls", namespace="courses")),
     path("users/", include("users.urls", namespace="users")),
-    path('swagger<format>/', schema_view.without_ui(cache_timeout=0), name='schema-json'),
-    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
-    path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+    path(
+        "swagger<format>/", schema_view.without_ui(cache_timeout=0), name="schema-json"
+    ),
+    path(
+        "swagger/",
+        schema_view.with_ui("swagger", cache_timeout=0),
+        name="schema-swagger-ui",
+    ),
+    path("redoc/", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"),
 ]

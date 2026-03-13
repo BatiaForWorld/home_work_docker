@@ -9,7 +9,7 @@
 Создайте виртуальное окружение
 
 ```bash
-python3.13 -m venv .venv
+python3.12 -m venv .venv
 ```
 
 Установите зависимости из файла requirements.txt
@@ -405,6 +405,226 @@ docker compose logs -f celery
 ```
 docker compose logs -f celery-beat
 ```
+# CI/CD и GitHub Actions
+
+Создайте свой VPS на сервере. 
+
+Это может быть ваш выделенный компьютер для функций сервера или арендованный VPS у хостинг провайдера.
+
+Для своего VPS настройте сеть для доступа ваших контейнеров к глобальной сети интернет, 
+открыв порт на роутере 80/tcp
+и 22/tcp для удаленного соединения по ssh. 
+И внесите настройки ssh после обмена ключами 
+с вашим VPS. Advanced --> NAT Forwarding --> Virtual Server
+
+Создайте SSH ключ 
+```angular2html
+ssh-keygen -t ed25519 -C "email"
+```
+Добавьте его на ваш VPS:
+```angular2html
+ssh-copy-id -p 22 user@192.12ваш_ip
+```
+Напиши YES и введите пароль пользователя под которым вы заходите
+
+Далее войдите в ваш VPS:
+```angular2html
+ssh -p 22 user@192.12ваш_ip
+```
+
+!!!Смените порт ssh по умолчанию.
+Откройте файл:
+```angular2html
+sudo nano /etc/ssh/sshd_config
+```
+Найдите и измените следующие параметры (уберите #, если строка закомментирована):
+- Port 22  `смените на любой выбрав в диапозоне 50000–65000`
+- PasswordAuthentication no — запрещает вход по обычному паролю.
+- PubkeyAuthentication yes — разрешает вход по ключам.
+- PermitRootLogin prohibit-password — (рекомендуется) разрешает root-вход только по ключу.
+
+Сохраните файл `` Ctrl+O`` `` Enter ``и выйдите ``Ctrl+X``
+Чтобы настройки вступили в силу перезапустите ssh сервер:
+```
+sudo systemctl restart ssh
+```
+
+
+Если вы используете LXC контейнеры, то необходимо создать мост, что бы контейнеры могли получали адрес от 
+роутера, предварительно зафиксировав MAC адрес LXC контейнера и зарезервировать его в настройках роутера 
+**Advanced --> Network --> Lan Settings --> Address Reservation**,
+что бы при перезагрузке сервера ваш контейнер не потерял свой ip адрес в локальной сети. 
+
+Установите UFW(Uncomplicated Firewall) — это простой инструмент командной строки для управления 
+брандмауэром (firewall) в Linux  
+```angular2html
+sudo apt update
+sudo apt install ufw
+```
+Откройте порты для доступа сетевого трафика:
+
+Добавьте правила:
+
+Для Nginx
+
+```angular2html
+sudo ufw allow 80/tcp
+```
+Для SSH соединения:
+```angular2html
+sudo ufw allow 22
+```
+Если нужно закрыть порт нйдите его порядковый номер командой
+```angular2html
+sudo ufw status numbered
+```
+И удалите указав порядковый номер из списка открытых портов
+```angular2html
+sudo ufw delete 1
+```
+Не забывайте, что на арендованных VPS так же есть страница настройки правил Firewall.
+
+
+
+### Создайте папку для проекта в вашем VPS сервере
+
+```angular2html
+sudo mkdir /var/www/yandex
+```
+Заполните файл .env по шаблону из env.example
+```angular2html
+sudo nano /var/www/yandex/.env
+```
+Сохраните файл `` Ctrl+O`` `` Enter ``и выйдите ``Ctrl+X``
+Посмотрите файл .env, что бы убедиться что он создан
+```angular2html
+cat /var/www/yandex/.env
+```
+Задайте права доступа для группы Docker
+
+Дайте права на чтение и записи в папку проекта с контенерами Docker
+```
+sudo chown -R $USER:$USER /var/www/yandex
+sudo chmod -R 755 /var/www/yandex
+```
+### Добавьте необходимые секреты для GitHub workflows:
+
+DEPLOY_DIR - папка которая содержит проект
+
+DOCKER_HUB_ACCESS_TOKEN - токен с Docker Hub
+
+DOCKER_HUB_USERNAME - логин с Docker Hub
+
+SERVER_IP - ваш публичный IP
+	
+SSH_KEY - ssh ключ откройте и скорируйте с дефисами c вашего пк с которого вы обменивались ключами с VPS
+```angular2html
+cat ~/.ssh/id_ed25519
+```
+SSH_PORT - порт вашего ssh
+
+SSH_USER - имя пользователя вашего VPS
+
+Выполните push из ветки и автоматически запуститься  action на GitHub.
+
+Дождитесь выполнения workflows.
+
+Перейдите в папку с проектом в терминале вашего VPS
+```angular2html
+cd /var/www/yandex
+```
+
+Проверьте работу контейнеров
+
+```angular2html
+docker ps
+```
+Проверьте расход ресурсов вашйей VPS
+
+```angular2html
+docker stats
+```
+
+Перезапуск отдельного контейнера
+
+### Найдите нужный вам контейнер
+
+Посмотреть контейнер по имени:
+```angular2html
+docker compose ps
+```
+Посмотреть контейнер по id:
+```angular2html
+docker ps
+```
+Перезапуск выбранного контейнера 
+```angular2html
+docker restart <id_контейнера или имя_контейнера>
+```
+Проверка файла конфигурации на наличие ошибок
+```angular2html
+docker compose exec nginx nginx -t
+```
+Проверка логов, которые можно настроить для fail2ban, а так же выявлять запросы к ввашему серверу на VPS
+```angular2html
+docker compose logs nginx --tail 20
+```
+Перезапуск Nginx 
+```angular2html
+docker compose exec nginx nginx -s reload
+```
+
+Проверка, принимает ли база подключения:
+```angular2html
+docker compose exec db pg_isready -U <USER_NAME>
+```
+Redis (Проверка отклика)
+```angular2html
+docker compose exec redis redis-cli ping
+```
+Проверка, видит ли Celery воркер очередь и готов ли он к работе:
+
+Посмотреть активные воркеры
+```angular2html
+docker compose exec celery celery -A имя_проекта inspect active
+```
+Посмотреть лог
+```angular2html
+docker compose logs celery --tail 50
+```
+Celery Beat (Планировщик)
+
+Проверить логи на наличие ошибок планировщика
+```angular2html
+docker compose logs celery-beat --tail 30
+```
+Логи всего Docker compose
+```angular2html
+docker compose logs -f
+```
+Если необходимо перезапустить контейнеры
+```angular2html
+docker compose restart
+```
+Если необходимо, пересоберите контейнеры
+```angular2html
+docker compose down
+docker compose up -d --build
+```
+Вышеуказаные команды выполнять находясь в папке
+```angular2html
+cd /var/www/yandex
+```
+### Удаление проекта с VPS
+```angular2html
+cd /var/www/yandex
+docker compose down
+cd /var/www/
+sudo rm -r yandex
+cd
+```
+
+
 
 Автор: Казанцев Андрей
 
