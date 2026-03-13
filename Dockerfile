@@ -1,4 +1,4 @@
-FROM python:3.13.5
+FROM python:3.12
 
 WORKDIR /app
 
@@ -16,3 +16,5 @@ ENV DATABASE_URL=postgres://user:password@host:port/dbname \
     DEBUG=False
 
 EXPOSE 8000
+
+CMD ["gunicorn", "config.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "3", "--timeout", "120"]

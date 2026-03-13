@@ -31,6 +31,9 @@ class CourseViewSet(ModelViewSet):
     pagination_class = CourseLessonPagination
 
     def get_queryset(self):
+        if getattr(self, 'swagger_fake_view', False):
+            return Course.objects.none()
+
         """Возвращает курсы в зависимости от роли пользователя."""
         user = self.request.user
         if not user or not user.is_authenticated:
@@ -85,6 +88,8 @@ class LessonListAPIView(ListAPIView):
     pagination_class = CourseLessonPagination
 
     def get_queryset(self):
+        if getattr(self, 'swagger_fake_view', False):
+            return Lesson.objects.none()
         """Возвращает список уроков в зависимости от роли пользователя."""
         user = self.request.user
         if user.is_authenticated and user.groups.filter(name="moderators").exists():
@@ -98,6 +103,8 @@ class LessonRetrieveAPIView(RetrieveAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
+        if getattr(self, 'swagger_fake_view', False):
+            return Lesson.objects.none()
         """Возвращает доступные уроки для просмотра."""
         user = self.request.user
         if user.is_authenticated and user.groups.filter(name="moderators").exists():
@@ -111,6 +118,8 @@ class LessonUpdateAPIView(UpdateAPIView):
     permission_classes = [IsAuthenticated, IsModer | IsOwner]
 
     def get_queryset(self):
+        if getattr(self, 'swagger_fake_view', False):
+            return Lesson.objects.none()
         """Возвращает доступные уроки для изменения."""
         user = self.request.user
         if user.is_authenticated and user.groups.filter(name="moderators").exists():
@@ -124,6 +133,8 @@ class LessonDestroyAPIView(DestroyAPIView):
     permission_classes = [IsAuthenticated, IsOwner & ~IsModer]
 
     def get_queryset(self):
+        if getattr(self, 'swagger_fake_view', False):
+            return Lesson.objects.none()
         """Возвращает доступные уроки для удаления."""
         user = self.request.user
         if user.is_authenticated and user.groups.filter(name="moderators").exists():
