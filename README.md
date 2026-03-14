@@ -542,7 +542,7 @@ SSH_USER - имя пользователя вашего VPS
 По завершению успешного deploy приложение будет доступно по адресу
 
 ```angular2html
-http://yandex.monster
+http://yandex.monster/swagger/
 ```
 
 Для работы с сервисом воспользуйтесь раннее описанной инструкцией к "Django REST Framework".
@@ -579,6 +579,31 @@ docker ps
 ```angular2html
 docker restart <id_контейнера или имя_контейнера>
 ```
+### Список команд перезапуска отдельных контейнеров:
+Redis
+```angular2html
+docker compose restart redis
+```
+Nginx
+```angular2html
+docker compose restart nginx
+```
+PostgreSQL
+```angular2html
+docker compose restart postgres
+```
+Celery
+```angular2html
+docker compose restart celery
+```
+Celery-beat
+```angular2html
+docker compose restart celery-beat
+```
+Gunicorn
+```angular2html
+docker compose restart web
+```
 Проверка файла конфигурации на наличие ошибок
 ```angular2html
 docker compose exec nginx nginx -t
@@ -587,7 +612,7 @@ docker compose exec nginx nginx -t
 ```angular2html
 docker compose logs nginx --tail 20
 ```
-Перезапуск Nginx 
+Перезапуск Nginx при изменениях **config** файла без полной остановки и перезапуска контейнера.
 ```angular2html
 docker compose exec nginx nginx -s reload
 ```
