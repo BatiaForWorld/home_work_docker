@@ -6,3 +6,7 @@ venv
 __pycache__
 *.pyc
 test_db.sqlite3
+celerybeat-schedule
+celerybeat.pid
+celerybeat-schedule-shm
+celerybeat-schedule-wal

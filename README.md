@@ -517,7 +517,9 @@ DOCKER_HUB_USERNAME - логин с Docker Hub
 
 SERVER_IP - ваш публичный IP
 	
-SSH_KEY - ssh ключ откройте и скорируйте с дефисами c вашего пк с которого вы обменивались ключами с VPS
+SSH_KEY - ssh ключ 
+
+Откройте и скопируйте с дефисами c вашего пк, с которого вы обменивались ключами с VPS
 ```angular2html
 cat ~/.ssh/id_ed25519
 ```
@@ -527,7 +529,15 @@ SSH_USER - имя пользователя вашего VPS
 
 Выполните push из ветки и автоматически запуститься  action на GitHub.
 
-Дождитесь выполнения workflows.
+Дождитесь выполнения workflows. 
+
+По завершению успешного deploy приложение будет доступно по адресу
+
+```angular2html
+http://yandex.monster
+```
+
+
 
 Перейдите в папку с проектом в терминале вашего VPS
 ```angular2html
@@ -543,11 +553,6 @@ docker ps
 
 ```angular2html
 docker stats
-```
-
-Откройте в браузере адрес приложения
-```angular2html
-http://yandex.monster/swagger/
 ```
 
 ### Найдите нужный вам контейнер
