@@ -24,7 +24,11 @@ def create_stripe_price(product_id, amount_in_kopecks):
         unit_amount=amount_in_kopecks,
         product=product_id,
     )
-    return {"id": price.id, "currency": price.currency, "unit_amount": price.unit_amount}
+    return {
+        "id": price.id,
+        "currency": price.currency,
+        "unit_amount": price.unit_amount,
+    }
 
 
 def create_stripe_session(price_id):
